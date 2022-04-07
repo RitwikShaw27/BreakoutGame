@@ -101,6 +101,48 @@ function movePaddle() {
   }
 }
 
+// Move ball on canvas
+function moveBall() {
+  ball.x += ball.dx;
+  ball.y += ball.dy;
+
+  // Wall collision (right/left)
+  if (ball.x + ball.size > canvas.width || ball.x - ball.size < 0) {
+    ball.dx *= -1; // ball.dx = ball.dx * -1
+  }
+
+  // Wall collision (top/bottom)
+  if (ball.y + ball.size > canvas.height || ball.y - ball.size < 0) {
+    ball.dy *= -1; // ball.dy = ball.dy * -1
+  }
+
+  // Paddle collision
+  if (
+    ball.x - ball.size > paddle.x &&
+    ball.x + ball.size < paddle.x + paddle.w &&
+    ball.y + ball.size > paddle.y
+  ) {
+    ball.dy = -ball.speed;
+  }
+
+  // Brick collision
+  bricks.forEach((column) => {
+    column.forEach((brick) => {
+      if (brick.visible) {
+        if (
+          ball.x - ball.size > brick.x && // left brick side check
+          ball.x + ball.size < brick.x + brick.w && // right brick side check
+          ball.y + ball.size > brick.y && // top brick side check
+          ball.y - ball.size < brick.y + brick.h // bottom brick side check
+        ) {
+          ball.dy *= -1;
+          brick.visible = false;
+        }
+      }
+    });
+  });
+}
+
 // Draw everything
 function draw() {
   // clear canvas
@@ -115,6 +157,7 @@ function draw() {
 // Update canvas drawing and animation
 function update() {
   movePaddle();
+  moveBall();
 
   // Draw everything
   draw();

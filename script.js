@@ -87,15 +87,68 @@ function drawBricks() {
   });
 }
 
+// Move paddle canvas
+function movePaddle() {
+  paddle.x += paddle.dx;
+
+  // Wall detection
+  if (paddle.x + paddle.w > canvas.width) {
+    paddle.x = canvas.width - paddle.w;
+  }
+
+  if (paddle.x < 0) {
+    paddle.x = 0;
+  }
+}
+
 // Draw everything
 function draw() {
+  // clear canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
   drawBall();
   drawPaddle();
   drawScore();
   drawBricks();
 }
 
-draw();
+// Update canvas drawing and animation
+function update() {
+  movePaddle();
+
+  // Draw everything
+  draw();
+
+  requestAnimationFrame(update);
+}
+
+update();
+
+// Keydown event
+function keyDown(e) {
+  // console.log(e.key);
+  if (e.key === "Right" || e.key === "ArrowRight") {
+    paddle.dx = paddle.speed;
+  } else if (e.key === "Left" || e.key === "ArrowLeft") {
+    paddle.dx = -paddle.speed;
+  }
+}
+
+// Keyup event
+function keyUp(e) {
+  if (
+    e.key === "Right" ||
+    e.key === "ArrowRight" ||
+    e.key === "Left" ||
+    e.key === "ArrowLeft"
+  ) {
+    paddle.dx = 0;
+  }
+}
+
+// Keyboard event listeners
+document.addEventListener("keydown", keyDown);
+document.addEventListener("keyup", keyUp);
 
 // Rules and close event handlers
 rulesBtn.addEventListener("click", () => rules.classList.add("show"));
